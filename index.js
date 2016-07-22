@@ -1,5 +1,8 @@
 module.exports = function(controller) {
   return {
+    getSignals: function(path) {
+      return controller.getSignals(path)
+    },
     connectCerebral: function (statePaths, signalPaths) {
       var tag = this
 
