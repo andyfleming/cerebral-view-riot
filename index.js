@@ -3,6 +3,35 @@ module.exports = function(controller) {
     connectCerebral: function (statePaths, signalPaths) {
       var tag = this
 
+      tag.on('update', function() {
+        tag.renderStart = new Date()
+      })
+
+      tag.on('updated', function() {
+
+        const tagName = tag.root.tagName.toLowerCase()
+        var map = {}
+
+        Object.keys(statePaths).forEach(function(key) {
+          map[statePaths[key].join('.')] = [tagName]
+        })
+
+        var event = new CustomEvent('cerebral.dev.components', {
+          detail: {
+            map: map,
+            render: {
+              start: tag.renderStart,
+              duration: (new Date()) - tag.renderStart,
+              // TODO: calculate changes; this event trigger may need moved somehow to controller.on('change'
+              changes: {},
+              components: [tagName]
+            }
+          }
+        })
+        window.dispatchEvent(event)
+
+      })
+
       // Attach signals to tag
       if(signalPaths) {
         Object.keys(signalPaths).forEach(function(key) {
